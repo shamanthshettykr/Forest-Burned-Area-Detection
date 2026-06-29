@@ -15,6 +15,11 @@ __pycache__/
 M1/results/*.pth
 M1/best_model.pth
 
+# Allow small model weights (under 100MB) for execution fallback
+!M1/best_model.pth
+!M1/results/smart_best_model.pth
+!M1/results/ultra_fast_best_model.pth
+
 # Dataset files
 M1/data/
 data/
