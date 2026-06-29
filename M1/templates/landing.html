@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DARU-Net: Satellite Intelligence for Earth Monitoring</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated starfield background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Floating satellites */
+        .satellite {
+            position: absolute;
+            font-size: 2em;
+            animation: float 6s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Hero section */
+        .hero {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 50px 20px;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            animation: fadeInUp 1.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 4em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b, #4ecdc4, #45b7d1);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease infinite;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero h2 {
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            color: #b8c6db;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            color: #a0a0a0;
+        }
+
+        /* Planet animation */
+        .planet {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            top: 10%;
+            right: 10%;
+            animation: rotate 20s linear infinite;
+            box-shadow: 0 0 50px rgba(79, 172, 254, 0.4);
+            z-index: 3;
+        }
+
+        .planet::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="30" r="3" fill="rgba(255,255,255,0.3)"/><circle cx="60" cy="20" r="2" fill="rgba(255,255,255,0.2)"/><circle cx="40" cy="60" r="4" fill="rgba(255,255,255,0.25)"/><circle cx="80" cy="70" r="2" fill="rgba(255,255,255,0.3)"/></svg>');
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 18px 35px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(240, 147, 251, 0.4);
+        }
+
+        .btn-tertiary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        /* Features section */
+        .features {
+            padding: 80px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+            animation: shimmer 1.5s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .feature-card p {
+            color: #b8c6db;
+            line-height: 1.6;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5em;
+            }
+            
+            .hero h2 {
+                font-size: 1.3em;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .planet {
+                width: 200px;
+                height: 200px;
+                top: 5%;
+                right: 5%;
+            }
+            
+            .features-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Engineering elements */
+        .engineering-element {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 1.5em;
+            animation: drift 8s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes drift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(10px, -10px) rotate(90deg); }
+            50% { transform: translate(-5px, 5px) rotate(180deg); }
+            75% { transform: translate(-10px, -5px) rotate(270deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated starfield -->
+    <div class="stars" id="stars"></div>
+
+    <!-- Floating satellites -->
+    <div class="satellite" style="top: 20%; left: 10%;">🛰️</div>
+    <div class="satellite" style="top: 60%; right: 15%; animation-delay: -2s;">🚀</div>
+    <div class="satellite" style="top: 80%; left: 20%; animation-delay: -4s;">🛰️</div>
+
+    <!-- Engineering elements -->
+    <div class="engineering-element" style="top: 15%; left: 5%;">⚙️</div>
+    <div class="engineering-element" style="top: 70%; right: 25%; animation-delay: -3s;">🔧</div>
+    <div class="engineering-element" style="top: 40%; left: 80%; animation-delay: -1s;">⚡</div>
+    <div class="engineering-element" style="top: 25%; right: 5%; animation-delay: -5s;">🔬</div>
+
+    <!-- Animated planet -->
+    <div class="planet"></div>
+
+    <div class="container">
+        <!-- Hero section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>DARU-Net</h1>
+                <h2>🌍 Satellite Intelligence for Earth Monitoring</h2>
+                <p>
+                    Advanced Deep Learning Architecture for Rapid Urban-area detection Network.
+                    Harness the power of Sentinel-1 SAR and Sentinel-2 optical imagery to detect
+                    burned areas with unprecedented 92.81% accuracy.
+                </p>
+                
+                <div class="action-buttons">
+                    <a href="/analysis" class="btn btn-primary">
+                        🚀 Start Analysis
+                    </a>
+                    <a href="/models" class="btn btn-secondary">
+                        📊 View Performance
+                    </a>
+                    <a href="/chatbot" class="btn btn-tertiary">
+                        💬 Learn More
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features section -->
+        <section class="features">
+            <div class="features-container">
+                <div class="feature-card">
+                    <span class="feature-icon">🛰️</span>
+                    <h3>Dual Satellite Data</h3>
+                    <p>Combines Sentinel-1 SAR and Sentinel-2 optical imagery for comprehensive Earth observation and burned area detection.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🧠</span>
+                    <h3>AI-Powered Analysis</h3>
+                    <p>CPU-optimized deep learning model with 2.1M parameters achieving 92.81% accuracy in burned area classification.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">⚡</span>
+                    <h3>Real-Time Processing</h3>
+                    <p>Instant image analysis with smart validation and optimal threshold detection for reliable results.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🌍</span>
+                    <h3>Global Coverage</h3>
+                    <p>Trained on diverse geographic regions and fire events for robust performance across different environments.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">📊</span>
+                    <h3>Performance Metrics</h3>
+                    <p>Comprehensive evaluation with F1-score 0.9273, precision 91.56%, and recall 93.94% for reliable monitoring.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🔬</span>
+                    <h3>Research Grade</h3>
+                    <p>Academic-quality implementation with detailed training graphs, model comparisons, and technical documentation.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Create animated starfield
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const numStars = 100;
+
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Random position
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                
+                // Random size
+                const size = Math.random() * 3 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                
+                // Random animation delay
+                star.style.animationDelay = Math.random() * 3 + 's';
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Initialize stars when page loads
+        document.addEventListener('DOMContentLoaded', createStars);
+
+        // Add parallax effect to satellites
+        document.addEventListener('mousemove', (e) => {
+            const satellites = document.querySelectorAll('.satellite');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+
+            satellites.forEach((satellite, index) => {
+                const speed = (index + 1) * 0.5;
+                const x = (mouseX - 0.5) * speed * 20;
+                const y = (mouseY - 0.5) * speed * 20;
+                
+                satellite.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

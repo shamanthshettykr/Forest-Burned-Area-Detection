@@ -1,0 +1,26 @@
+# Virtual environments
+.venv/
+.venv_old/
+M1/.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Large Model weights (exceeds Github 100MB limit)
+*.pth
+*.pt
+M1/results/*.pth
+M1/best_model.pth
+
+# Dataset files
+M1/data/
+data/
+
+# OS and IDE files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

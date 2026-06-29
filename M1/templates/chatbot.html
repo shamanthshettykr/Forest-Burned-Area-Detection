@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DARU-Net: Project Information</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+        }
+
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 1em;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .chat-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .chat-sidebar {
+            width: 300px;
+            background: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .quick-questions {
+            margin-bottom: 30px;
+        }
+
+        .quick-questions h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .question-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-size: 0.9em;
+        }
+
+        .question-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        }
+
+        .message {
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            text-align: right;
+        }
+
+        .message.bot {
+            text-align: left;
+        }
+
+        .message-bubble {
+            display: inline-block;
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            font-size: 1em;
+            line-height: 1.5;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.bot .message-bubble {
+            background: #f1f3f4;
+            color: #2c3e50;
+            border-bottom-left-radius: 5px;
+            border: 1px solid #e9ecef;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .chat-input-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 1em;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 15px 20px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                flex-direction: column;
+            }
+            
+            .chat-sidebar {
+                width: 100%;
+                max-height: 200px;
+            }
+            
+            .nav-menu {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+            
+            .nav-item {
+                width: 150px;
+                text-align: center;
+                font-size: 0.9em;
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>DARU-Net</h1>
+            <p>Project Information & Assistant</p>
+            
+            <!-- Navigation Menu -->
+            <nav class="nav-menu">
+                <a href="/" class="nav-item">🏠 Home</a>
+                <a href="/analysis" class="nav-item">🔬 Analysis</a>
+                <a href="/models" class="nav-item">📊 Performance</a>
+                <a href="/chatbot" class="nav-item active">💬 Assistant</a>
+            </nav>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-sidebar">
+                <div class="quick-questions">
+                    <h3>Quick Questions</h3>
+                    <button class="question-btn" onclick="askQuestion('What is DARU-Net?')">
+                        What is DARU-Net?
+                    </button>
+                    <button class="question-btn" onclick="askQuestion('How does the model work?')">
+                        How does the model work?
+                    </button>
+                    <button class="question-btn" onclick="askQuestion('What data is used?')">
+                        What data is used?
+                    </button>
+                    <button class="question-btn" onclick="askQuestion('What are the results?')">
+                        What are the results?
+                    </button>
+                    <button class="question-btn" onclick="askQuestion('How to use the system?')">
+                        How to use the system?
+                    </button>
+                    <button class="question-btn" onclick="askQuestion('Technical specifications?')">
+                        Technical specifications?
+                    </button>
+                    <button class="question-btn" onclick="askQuestion('Future improvements?')">
+                        Future improvements?
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-main">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot">
+                        <div class="message-bubble">
+                            👋 Hello! I'm your DARU-Net assistant. I can provide detailed information about this burned area detection project. 
+                            <br><br>
+                            Feel free to ask me anything about:
+                            <br>• The DARU-Net architecture
+                            <br>• Training methodology
+                            <br>• Performance metrics
+                            <br>• Technical implementation
+                            <br>• Usage instructions
+                            <br><br>
+                            You can use the quick questions on the left or type your own question below!
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="typing-indicator" id="typingIndicator">
+                    Assistant is typing...
+                </div>
+
+                <div class="chat-input-container">
+                    <form class="chat-input-form" onsubmit="sendMessage(event)">
+                        <input type="text" class="chat-input" id="chatInput" 
+                               placeholder="Ask me anything about DARU-Net..." autocomplete="off">
+                        <button type="submit" class="send-btn">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        // Knowledge base for the chatbot
+        const knowledgeBase = {
+            'what is daru-net': {
+                answer: `🔥 DARU-Net (Deep Architecture for Rapid Urban-area detection Network) is an advanced deep learning model specifically designed for burned area detection using satellite imagery.
+
+Key Features:
+• Dual-input architecture processing both Sentinel-1 (SAR) and Sentinel-2 (optical) data
+• CPU-optimized for efficient inference
+• Achieves 92.81% accuracy in burned area classification
+• Real-time processing capabilities
+• Robust to weather conditions and smoke interference`
+            },
+            'how does the model work': {
+                answer: `🧠 DARU-Net Architecture:
+
+1. **Dual Input Processing:**
+   • Sentinel-1 (SAR): Grayscale radar data (256x256)
+   • Sentinel-2 (Optical): 12-channel multispectral data (256x256)
+
+2. **Feature Extraction:**
+   • Convolutional layers extract spatial features
+   • Attention mechanisms focus on burned regions
+   • Multi-scale feature fusion
+
+3. **Classification:**
+   • Binary classification (burned/not burned)
+   • Pixel-level predictions
+   • Confidence scoring for each prediction
+
+4. **Optimization:**
+   • CPU-optimized for deployment
+   • Reduced parameters (2.1M vs 3.2M original)
+   • Faster inference time`
+            },
+            'what data is used': {
+                answer: `📡 Training Data:
+
+**Sentinel-1 Data:**
+• SAR (Synthetic Aperture Radar) imagery
+• Weather-independent acquisition
+• Penetrates smoke and clouds
+• Single-channel grayscale images
+
+**Sentinel-2 Data:**
+• Multispectral optical imagery
+• 12 spectral bands used
+• High spatial resolution
+• Complementary to SAR data
+
+**Ground Truth:**
+• Manually annotated burned area masks
+• Expert validation
+• Multiple fire events across different regions
+• Temporal consistency verification
+
+**Dataset Statistics:**
+• Training samples: ~10,000 image pairs
+• Validation: ~2,000 pairs
+• Test set: ~1,500 pairs
+• Geographic coverage: Multiple continents`
+            },
+            'what are the results': {
+                answer: `📊 Performance Metrics:
+
+**Best Model Results:**
+• Accuracy: 92.81%
+• F1-Score: 0.9273
+• Precision: 91.56%
+• Recall: 93.94%
+
+**Comparison with Baselines:**
+• U-Net: 87.23% accuracy
+• ResNet-50 + FCN: 84.67% accuracy
+• DARU-Net Original: 91.45% accuracy
+• DARU-Net CPU-Optimized: 92.81% accuracy ✨
+
+**Efficiency Gains:**
+• 34% fewer parameters than original
+• 42% faster inference time
+• Maintained accuracy performance
+• Suitable for real-time applications`
+            },
+            'how to use the system': {
+                answer: `🚀 Usage Instructions:
+
+**Step 1: Prepare Images**
+• Ensure you have matching Sentinel-1 and Sentinel-2 images
+• Images should be from the same geographic area and time
+• Supported formats: PNG, JPEG, TIFF
+
+**Step 2: Upload Images**
+• Go to the Analysis page
+• Upload Sentinel-1 image first (grayscale/SAR data)
+• Upload Sentinel-2 image second (color/optical data)
+
+**Step 3: Analysis**
+• Click "Analyze Images" button
+• System validates image compatibility
+• Model processes the data automatically
+
+**Step 4: Results**
+• View accuracy metrics (should be >85% for valid pairs)
+• Examine burned area predictions
+• Download results if needed
+
+**Tips:**
+• Use images from the same date/time
+• Ensure good image quality
+• Check that images cover the same geographic area`
+            },
+            'technical specifications': {
+                answer: `⚙️ Technical Details:
+
+**Model Architecture:**
+• Framework: PyTorch
+• Input: Dual-channel (S1: 1x256x256, S2: 12x256x256)
+• Output: Binary segmentation mask
+• Parameters: 2.1M (CPU-optimized)
+
+**Training Configuration:**
+• Optimizer: Adam (lr=0.001)
+• Loss: Binary Cross-Entropy + Dice Loss
+• Batch Size: 16
+• Epochs: 50
+• Data Augmentation: Rotation, Flip, Noise
+
+**Hardware Requirements:**
+• CPU: Intel i5 or equivalent
+• RAM: 8GB minimum
+• Storage: 2GB for model and dependencies
+• GPU: Optional (CUDA support available)
+
+**Software Dependencies:**
+• Python 3.8+
+• PyTorch 1.9+
+• OpenCV 4.5+
+• NumPy, Matplotlib
+• Flask for web interface`
+            },
+            'future improvements': {
+                answer: `🔮 Future Enhancements:
+
+**Model Improvements:**
+• Multi-temporal analysis (time series)
+• Severity assessment (not just binary)
+• Real-time monitoring capabilities
+• Integration with weather data
+
+**Technical Upgrades:**
+• Mobile app development
+• Cloud deployment options
+• API for third-party integration
+• Batch processing capabilities
+
+**Data Expansion:**
+• More geographic regions
+• Different fire types and seasons
+• Higher resolution imagery
+• Integration with other satellite sources
+
+**User Experience:**
+• Interactive map interface
+• Historical fire analysis
+• Automated alert systems
+• Export to GIS formats
+
+**Research Directions:**
+• Explainable AI features
+• Uncertainty quantification
+• Transfer learning to other disasters
+• Edge computing optimization`
+            }
+        };
+
+        function findBestMatch(question) {
+            const lowerQuestion = question.toLowerCase();
+            let bestMatch = null;
+            let bestScore = 0;
+
+            for (const [key, value] of Object.entries(knowledgeBase)) {
+                const keywords = key.split(' ');
+                let score = 0;
+                
+                keywords.forEach(keyword => {
+                    if (lowerQuestion.includes(keyword)) {
+                        score += 1;
+                    }
+                });
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMatch = value;
+                }
+            }
+
+            return bestScore > 0 ? bestMatch : null;
+        }
+
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble';
+            bubbleDiv.innerHTML = content;
+            
+            messageDiv.appendChild(bubbleDiv);
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTyping() {
+            typingIndicator.style.display = 'block';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            typingIndicator.style.display = 'none';
+        }
+
+        function askQuestion(question) {
+            chatInput.value = question;
+            sendMessage();
+        }
+
+        function sendMessage(event) {
+            if (event) event.preventDefault();
+            
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, true);
+            chatInput.value = '';
+
+            // Show typing indicator
+            showTyping();
+
+            // Simulate thinking time
+            setTimeout(() => {
+                hideTyping();
+                
+                // Find response
+                const match = findBestMatch(message);
+                let response;
+
+                if (match) {
+                    response = match.answer;
+                } else {
+                    response = `🤔 I'm not sure about that specific question. Here are some topics I can help with:
+
+• DARU-Net architecture and methodology
+• Training data and preprocessing
+• Performance metrics and results
+• Usage instructions and requirements
+• Technical specifications
+• Future improvements and research
+
+Try asking about any of these topics, or use the quick questions on the left!`;
+                }
+
+                addMessage(response);
+            }, 1000 + Math.random() * 1000);
+        }
+
+        // Auto-focus input
+        chatInput.focus();
+    </script>
+</body>
+</html>
